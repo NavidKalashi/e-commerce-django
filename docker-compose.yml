@@ -1,0 +1,33 @@
+name: ecommerce-django-project
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ecommerce_data:/var/lib/postgresql/data
+
+  ecommerce:
+    image: ecommerce-image
+    container_name: twitter
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    environment:
+      DB_NAME: ecommerce
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_HOST: postgres
+      DB_PORT: 5432
+
+volumes:
+  ecommerce_data:
