@@ -15,7 +15,7 @@ services:
 
   ecommerce:
     image: ecommerce-image
-    container_name: twitter
+    container_name: ecommerce
     ports:
       - "8000:8000"
     volumes:
