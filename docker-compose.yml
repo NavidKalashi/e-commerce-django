@@ -29,5 +29,17 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
 
+  nodeapp:
+    build: ./nodeapp   # مسیر دایرکتوری Node.js شما
+    container_name: nodeapp
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./nodeapp:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - ecommerce
+    command: npm start
+
 volumes:
   ecommerce_data:
