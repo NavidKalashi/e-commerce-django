@@ -30,7 +30,7 @@ services:
       DB_PORT: 5432
 
   nodeapp:
-    build: ./nodeapp   # مسیر دایرکتوری Node.js شما
+    build: ./nodeapp
     container_name: nodeapp
     ports:
       - "8001:8001"
@@ -40,6 +40,14 @@ services:
     depends_on:
       - ecommerce
     command: npm start
+
+  smtp4dev:
+    image: rnwood/smtp4dev
+    container_name: smtp4dev
+    restart: always
+    ports:
+      - "3000:80"
+      - "2525:25"
 
 volumes:
   ecommerce_data:
