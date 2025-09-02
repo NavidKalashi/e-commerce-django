@@ -29,6 +29,15 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
 
+      EMAIL_HOST: smtp4dev
+      EMAIL_PORT: 25
+      EMAIL_HOST_USER: ""
+      EMAIL_HOST_PASSWORD: ""
+      EMAIL_USE_TLS: "False"
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
   nodeapp:
     build: ./nodeapp
     container_name: nodeapp
@@ -49,5 +58,34 @@ services:
       - "3000:80"
       - "2525:25"
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    image: ecommerce-image
+    container_name: celery
+    command: celery -A ecommerce worker -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - ecommerce
+  
+  celery-beat:
+    image: ecommerce-image
+    container_name: celery-beat
+    command: celery -A ecommerce beat -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - ecommerce
+      
 volumes:
   ecommerce_data:
+  redis_data: 
