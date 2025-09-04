@@ -38,17 +38,17 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
 
-  nodeapp:
-    build: ./nodeapp
-    container_name: nodeapp
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./nodeapp:/usr/src/app
-      - /usr/src/app/node_modules
-    depends_on:
-      - ecommerce
-    command: npm start
+  # nodeapp:
+  #   build: ./nodeapp
+  #   container_name: nodeapp
+  #   ports:
+  #     - "8001:8001"
+  #   volumes:
+  #     - ./nodeapp:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   depends_on:
+  #     - ecommerce
+  #   command: npm start
 
   smtp4dev:
     image: rnwood/smtp4dev
@@ -69,23 +69,39 @@ services:
   celery:
     image: ecommerce-image
     container_name: celery
+    working_dir: /app
     command: celery -A ecommerce worker -l info
     volumes:
       - .:/app
     depends_on:
       - redis
       - ecommerce
-  
+
   celery-beat:
     image: ecommerce-image
     container_name: celery-beat
+    working_dir: /app
     command: celery -A ecommerce beat -l info
     volumes:
       - .:/app
     depends_on:
       - redis
       - ecommerce
-      
+
+  flower:
+    build: .
+    image: ecommerce-image
+    container_name: flower
+    working_dir: /app
+    command: celery --broker=redis://redis:6379/0 -A ecommerce flower --port=5555
+    ports:
+      - "5555:5555"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - ecommerce
+
 volumes:
   ecommerce_data:
   redis_data: 
